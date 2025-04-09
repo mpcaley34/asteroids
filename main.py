@@ -21,8 +21,6 @@ def main():
 
     asteroid_field = AsteroidField()
 
-    dt = clock.tick(60) / 1000
-
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, shots_group)
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -32,6 +30,7 @@ def main():
     print(f"Screen height: {SCREEN_HEIGHT}")
 
     while True:
+        dt = clock.tick(60) / 1000
         # Make sure close button works
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -39,9 +38,14 @@ def main():
 
         screen.fill('black')
         updatable.update(dt)
-        for i in asteroids:
-            if i.checkCollision(player):
+        for asteroid in asteroids:
+            if asteroid.checkCollision(player):
                 sys.exit('Game over!')
+
+            for bullet in shots_group:
+                if bullet.checkCollision(asteroid):
+                    bullet.kill()
+                    asteroid.split()
 
         for i in drawable:
             i.draw(screen)
